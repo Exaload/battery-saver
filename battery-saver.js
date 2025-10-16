@@ -93,11 +93,16 @@
         // Check for Battery API support
         if ('getBattery' in navigator) {
           this.battery = await navigator.getBattery();
-          this.updateBatteryStatus();
           
-          // Add battery event listeners
-          this.battery.addEventListener('levelchange', () => this.updateBatteryStatus());
-          this.battery.addEventListener('chargingchange', () => this.updateBatteryStatus());
+          if (this.battery) {
+            this.updateBatteryStatus();
+            
+            // Add battery event listeners
+            this.battery.addEventListener('levelchange', () => this.updateBatteryStatus());
+            this.battery.addEventListener('chargingchange', () => this.updateBatteryStatus());
+          } else {
+            throw new Error('Failed to get battery object');
+          }
         } else {
           console.warn('Battery API not supported. Battery Saver will use default mode.');
           this.applyMode('normal');
@@ -473,6 +478,11 @@
   }
 
   function autoInit() {
+    // Prevent multiple initializations
+    if (window.batterySaver) {
+      return;
+    }
+    
     if (document.documentElement.hasAttribute('data-battery-saver-auto')) {
       window.batterySaver = new BatterySaver();
     }

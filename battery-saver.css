@@ -12,15 +12,21 @@
 }
 
 /* Apply reduced animation/transition durations globally when battery saver is active */
-html[data-battery-saver-mode="critical"] *,
-html[data-battery-saver-mode="low"] * {
+html[data-battery-saver-mode="critical"] .battery-saver-enabled,
+html[data-battery-saver-mode="low"] .battery-saver-enabled {
   animation-duration: var(--battery-saver-animation-duration) !important;
   transition-duration: var(--battery-saver-transition-duration) !important;
 }
 
-html[data-battery-saver-mode="medium"] * {
+html[data-battery-saver-mode="medium"] .battery-saver-enabled {
   animation-duration: var(--battery-saver-animation-duration);
   transition-duration: var(--battery-saver-transition-duration);
+}
+
+/* For elements that haven't opted in, use less aggressive approach */
+html[data-battery-saver-mode="critical"]:not([data-battery-saver-exclude]) * {
+  animation-duration: 0.01ms !important;
+  transition-duration: 0.01ms !important;
 }
 
 /* Disable animations completely in critical mode */
