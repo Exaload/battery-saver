@@ -1,0 +1,259 @@
+/**
+ * Battery Saver CSS - Performance-optimized styles
+ * @version 1.0.0
+ * @license MIT
+ */
+
+/* CSS Custom Properties for dynamic control */
+:root {
+  --battery-saver-animation-duration: 1s;
+  --battery-saver-transition-duration: 0.3s;
+  --battery-saver-frame-interval: 16.67ms; /* 60fps by default */
+}
+
+/* Apply reduced animation/transition durations globally when battery saver is active */
+html[data-battery-saver-mode="critical"] *,
+html[data-battery-saver-mode="low"] * {
+  animation-duration: var(--battery-saver-animation-duration) !important;
+  transition-duration: var(--battery-saver-transition-duration) !important;
+}
+
+html[data-battery-saver-mode="medium"] * {
+  animation-duration: var(--battery-saver-animation-duration);
+  transition-duration: var(--battery-saver-transition-duration);
+}
+
+/* Disable animations completely in critical mode */
+html[data-battery-saver-mode="critical"] * {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Reduce motion utilities */
+.battery-saver-reduce-motion *,
+.battery-saver-reduce-motion *::before,
+.battery-saver-reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Disable shadows when battery is low */
+.battery-saver-reduce-shadows * {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Disable blur effects */
+.battery-saver-reduce-blur * {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Simplify gradients to solid colors */
+.battery-saver-reduce-gradients * {
+  background-image: none !important;
+}
+
+/* Optimize transforms for better performance */
+html[data-battery-saver-mode]:not([data-battery-saver-mode="normal"]) * {
+  will-change: auto !important;
+}
+
+/* Disable parallax effects */
+[data-battery-saver-parallax-disabled] {
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* Performance-optimized animation class */
+.battery-saver-optimized {
+  /* Use GPU-accelerated properties only */
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Force hardware acceleration for critical animations */
+html[data-battery-saver-mode="normal"] .battery-saver-animate {
+  animation-duration: var(--battery-saver-animation-duration);
+  transition-duration: var(--battery-saver-transition-duration);
+}
+
+/* Utility classes for developers */
+
+/* Opt-in to battery saver optimizations */
+.battery-saver-enabled {
+  animation-duration: var(--battery-saver-animation-duration);
+  transition-duration: var(--battery-saver-transition-duration);
+}
+
+/* Opt-out from battery saver (critical animations) */
+.battery-saver-exclude {
+  animation-duration: inherit !important;
+  transition-duration: inherit !important;
+}
+
+html[data-battery-saver-mode="critical"] .battery-saver-exclude {
+  animation: inherit !important;
+  transition: inherit !important;
+}
+
+/* Minimal motion alternative for fancy effects */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Battery level indicator styles (optional) */
+.battery-saver-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 8px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  z-index: 10000;
+  backdrop-filter: blur(10px);
+  transition: opacity 0.3s ease;
+}
+
+html[data-battery-saver-mode="critical"] .battery-saver-indicator {
+  backdrop-filter: none;
+  transition: none;
+}
+
+.battery-saver-indicator.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.battery-saver-indicator__level {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.battery-saver-indicator__mode {
+  font-size: 12px;
+  opacity: 0.8;
+  text-transform: capitalize;
+}
+
+.battery-saver-indicator--critical {
+  background: rgba(220, 38, 38, 0.9);
+}
+
+.battery-saver-indicator--low {
+  background: rgba(234, 88, 12, 0.9);
+}
+
+.battery-saver-indicator--medium {
+  background: rgba(234, 179, 8, 0.9);
+}
+
+.battery-saver-indicator--normal {
+  background: rgba(34, 197, 94, 0.9);
+}
+
+/* Toggle switch styles */
+.battery-saver-toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.battery-saver-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.battery-saver-toggle__slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+html[data-battery-saver-mode="critical"] .battery-saver-toggle__slider {
+  transition: none;
+}
+
+.battery-saver-toggle__slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+html[data-battery-saver-mode="critical"] .battery-saver-toggle__slider::before {
+  transition: none;
+}
+
+.battery-saver-toggle input:checked + .battery-saver-toggle__slider {
+  background-color: #10b981;
+}
+
+.battery-saver-toggle input:checked + .battery-saver-toggle__slider::before {
+  transform: translateX(26px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .battery-saver-indicator {
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+}
+
+/* Print styles - disable battery saver for printing */
+@media print {
+  html[data-battery-saver-mode] * {
+    animation: inherit !important;
+    transition: inherit !important;
+    box-shadow: inherit !important;
+    text-shadow: inherit !important;
+    filter: inherit !important;
+  }
+}
+
+/* Performance hints */
+.battery-saver-gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Disable expensive CSS features in battery saving modes */
+html[data-battery-saver-mode="critical"] .battery-saver-expensive,
+html[data-battery-saver-mode="low"] .battery-saver-expensive {
+  mix-blend-mode: normal !important;
+  clip-path: none !important;
+  mask: none !important;
+  -webkit-mask: none !important;
+}

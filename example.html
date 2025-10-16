@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-battery-saver-auto>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battery Saver - Basic Example</title>
+    <link rel="stylesheet" href="battery-saver.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease;
+        }
+
+        .status {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .battery-level {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .mode {
+            font-size: 1.5rem;
+            margin: 10px 0;
+            text-transform: uppercase;
+            animation: slideIn 0.5s ease;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 20px auto;
+            border-radius: 10px;
+            animation: spin 3s linear infinite;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>⚡ Battery Saver Example</h1>
+        
+        <div class="status">
+            <div class="battery-level" id="battery">Loading...</div>
+            <div class="mode" id="mode">Detecting mode...</div>
+        </div>
+
+        <div class="box"></div>
+
+        <div class="note">
+            <strong>Notice:</strong> The animations on this page will automatically adjust based on your battery level. Try toggling battery saver or changing modes to see the effect!
+        </div>
+    </div>
+
+    <script src="battery-saver.js"></script>
+    <script>
+        // Update the display
+        function updateDisplay() {
+            const status = window.batterySaver.getStatus();
+            document.getElementById('battery').textContent = status.batteryLevel + '%';
+            document.getElementById('mode').textContent = status.mode + ' Mode';
+            
+            // Change color based on mode
+            const modeEl = document.getElementById('mode');
+            const colors = {
+                normal: '#10b981',
+                medium: '#f59e0b',
+                low: '#f97316',
+                critical: '#dc2626'
+            };
+            modeEl.style.color = colors[status.mode] || '#666';
+        }
+
+        // Wait for initialization
+        if (window.batterySaver) {
+            window.batterySaver.on('batteryChange', updateDisplay);
+            window.batterySaver.on('modeChange', updateDisplay);
+            updateDisplay();
+        } else {
+            // Fallback if auto-init hasn't run yet
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => {
+                    if (window.batterySaver) {
+                        window.batterySaver.on('batteryChange', updateDisplay);
+                        window.batterySaver.on('modeChange', updateDisplay);
+                        updateDisplay();
+                    }
+                }, 100);
+            });
+        }
+    </script>
+</body>
+</html>
